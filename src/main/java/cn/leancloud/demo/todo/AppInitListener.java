@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebListener;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.internal.impl.EngineRequestSign;
+import com.avos.avoscloud.internal.impl.JavaRequestSignImplementation;
 
 import cn.leancloud.LeanEngine;
 
@@ -25,11 +25,11 @@ public class AppInitListener implements ServletContextListener {
     // 注册子类化
     AVObject.registerSubclass(Todo.class);
     // 初始化AVOSCloud，请保证在整个项目中间只初始化一次
-    AVOSCloud.initialize(appId, appKey, appMasterKey);
+    LeanEngine.initialize(appId, appKey, appMasterKey);
     // 在请求签名中使用masterKey以激活云代码的最高权限
-    EngineRequestSign.instance().setUserMasterKey(true);
+    JavaRequestSignImplementation.instance().setUseMasterKey(true);
     // 打开 debug 日志
-    // AVOSCloud.setDebugLogEnabled(true);
+    AVOSCloud.setDebugLogEnabled(true);
     // 向云引擎注册云函数
     LeanEngine.register(Cloud.class);
     if (System.getenv("LEANCLOUD_APP_ENV").equals("development")) {
