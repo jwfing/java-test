@@ -4,6 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.avos.avoscloud.AVCloud;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.internal.impl.JavaRequestSignImplementation;
@@ -36,6 +37,8 @@ public class AppInitListener implements ServletContextListener {
       // 如果是开发环境，则设置 AVCloud.callFunction 和 AVCloud.rpcFunction 调用本地云函数实现
       // 如果需要本地开发时调用云端云函数实现，则注释掉下面语句。
       LeanEngine.setLocalEngineCallEnabled(true);
+    } else if ("stage".equals(System.getenv("LEANCLOUD_APP_ENV"))) {
+      AVCloud.setProductionMode(false);
     }
   }
 }

@@ -1,7 +1,9 @@
 package cn.leancloud.demo.todo;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,10 +29,12 @@ public class TodoServlet extends HttpServlet {
     if (!AVUtils.isBlankString(offsetParam)) {
       offset = Integer.parseInt(offsetParam);
     }
-    List<Todo> todos;
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("offset", offset);
     try {
-      todos = AVCloud.rpcFunction("getTodos", offset);
-      req.setAttribute("todos", todos);
+      List<Todo> data = AVCloud.rpcFunction("getTodos", params);
+      req.setAttribute("todos", data);
+
     } catch (AVException e) {
       e.printStackTrace();
     }
@@ -46,7 +50,6 @@ public class TodoServlet extends HttpServlet {
       AVObject note = new Todo();
       note.put("content", content);
       note.save();
-      System.out.println(note);
     } catch (AVException e) {
       e.printStackTrace();
     }

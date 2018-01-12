@@ -1,7 +1,9 @@
 package cn.leancloud.demo.todo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -17,14 +19,22 @@ import cn.leancloud.EngineRequestContext;
 
 public class Cloud {
 
-  @EngineFunction("hello")
-  public static String hello() {
-    return "Hello world!";
-  }
-
   @EngineFunction("foo")
   public static String foo() {
     return "bar";
+  }
+
+  @EngineFunction("hello")
+  public static Map<String, Object> hello(@EngineFunctionParam("name") String name) {
+    Map<String, Object> result = new HashMap<String, Object>();
+    result.put("action", "hello");
+    result.put("name", name);
+    return result;
+  }
+
+  @EngineFunction("remoteAddress")
+  public static String remoteAddress() {
+    return EngineRequestContext.getRemoteAddress();
   }
 
   @EngineHook(className = "TestReview", type = EngineHookType.beforeSave)
