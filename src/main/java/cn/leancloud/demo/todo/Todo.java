@@ -1,7 +1,7 @@
 package cn.leancloud.demo.todo;
 
-import com.avos.avoscloud.AVClassName;
-import com.avos.avoscloud.AVObject;
+import cn.leancloud.annotation.AVClassName;
+import cn.leancloud.AVObject;
 
 @AVClassName("Todo")
 public class Todo extends AVObject {

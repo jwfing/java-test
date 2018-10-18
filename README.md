@@ -24,10 +24,10 @@ mvn package
 关联应用：
 
 ```
-lean app add origin <appId>
+lean switch
 ```
 
-这里的 appId 填上你在 LeanCloud 上创建的某一应用的 appId 即可。origin 则有点像 Git 里的 remote 名称。
+之后根据提示选择对应的 app 就可以了。
 
 启动项目：
 

@@ -1,6 +1,7 @@
 package cn.leancloud.demo.todo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.avos.avoscloud.AVCloud;
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVUtils;
+import cn.leancloud.AVCloud;
+import cn.leancloud.AVException;
+import cn.leancloud.AVObject;
+import cn.leancloud.utils.StringUtil;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 @WebServlet(name = "AppServlet", urlPatterns = {"/todos"})
 public class TodoServlet extends HttpServlet {
@@ -26,18 +30,14 @@ public class TodoServlet extends HttpServlet {
       throws ServletException, IOException {
     String offsetParam = req.getParameter("offset");
     int offset = 0;
-    if (!AVUtils.isBlankString(offsetParam)) {
+    if (!StringUtil.isEmpty(offsetParam)) {
       offset = Integer.parseInt(offsetParam);
     }
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("offset", offset);
-    try {
-      List<Todo> data = AVCloud.rpcFunction("getTodos", params);
-      req.setAttribute("todos", data);
-
-    } catch (AVException e) {
-      e.printStackTrace();
-    }
+    Observable<List<Todo>> result = AVCloud.callFunctionInBackground("getTodos", params);
+    List<Todo> todos = result.blockingFirst();
+    req.setAttribute("todos", todos);
     req.getRequestDispatcher("/todos.jsp").forward(req, resp);
   }
 
@@ -46,13 +46,10 @@ public class TodoServlet extends HttpServlet {
       throws ServletException, IOException {
     String content = req.getParameter("content");
 
-    try {
-      AVObject note = new Todo();
-      note.put("content", content);
-      note.save();
-    } catch (AVException e) {
-      e.printStackTrace();
-    }
+    AVObject note = new Todo();
+    note.put("content", content);
+    note.save();
+
     resp.sendRedirect("/todos");
   }
 }

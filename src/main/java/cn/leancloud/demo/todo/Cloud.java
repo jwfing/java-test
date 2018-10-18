@@ -5,17 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.AVUtils;
+import cn.leancloud.AVException;
+import cn.leancloud.AVObject;
+import cn.leancloud.AVQuery;
+import cn.leancloud.AVUser;
+import cn.leancloud.utils.AVUtils;
 
 import cn.leancloud.EngineFunction;
 import cn.leancloud.EngineFunctionParam;
 import cn.leancloud.EngineHook;
 import cn.leancloud.EngineHookType;
 import cn.leancloud.EngineRequestContext;
+import cn.leancloud.utils.StringUtil;
 
 public class Cloud {
 
@@ -74,7 +75,7 @@ public class Cloud {
     if (obj == null) {
       throw new AVException(400, "empty object");
     }
-    if (AVUtils.isBlankString(obj.getObjectId())) {
+    if (StringUtil.isEmpty(obj.getObjectId())) {
       throw new AVException(400, "object not saved");
     } else if (!"TestReview".equals(obj.getClassName())) {
       throw new AVException(400, "className not match");
@@ -109,17 +110,7 @@ public class Cloud {
     query.orderByDescending("createdAt");
     query.include("createdAt");
     query.skip(offset);
-    try {
-      return query.find();
-    } catch (AVException e) {
-      if (e.getCode() == 101) {
-        // 该错误的信息为：{ code: 101, message: 'Class or object doesn\'t exists.' }，说明 Todo 数据表还未创建，所以返回空的
-        // Todo 列表。
-        // 具体的错误代码详见：https://leancloud.cn/docs/error_code.html
-        return new ArrayList<>();
-      }
-      throw e;
-    }
+    return query.find();
   }
 
   @EngineHook(className = "Todo", type = EngineHookType.beforeSave)
